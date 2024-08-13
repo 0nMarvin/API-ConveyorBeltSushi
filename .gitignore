@@ -1,0 +1,13 @@
+# Ignorar pasta node_modules
+node_modules/
+
+# Ignorar package-lock
+package-lock.json
+
+# Ignorar modulos referência
+AuthorAPI.js
+BookAPI.js
+OldInstallAPI
+Author.js
+Book.js
+.env
