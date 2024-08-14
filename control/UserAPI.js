@@ -4,8 +4,9 @@ var router = express.Router();
 const {sucess, fail} = require("../helpers/resposta")
 const UserService = require('../services/userService')
 const auth = require("../midware/auth")
+const valid = require("../midware/validate")
 
-router.post('/alterar', auth.autorization, auth.validaNome,auth.validaSenha, async (req, res) => {
+router.put('/alterar', auth.autorization, valid.validaNome,valid.validaSenha, async (req, res) => {
     const {user, senha} = req.body;
 
     const username = auth.userName(req);
@@ -56,7 +57,7 @@ router.delete('/adm/excluir/:id', auth.autorizationAdm, async (req, res) => {
     }
 })
 
-router.post('/adm/alterar',auth.autorizationAdm,auth.validaNome,auth.validaSenha, async (req, res) => {
+router.put('/adm/alterar',auth.autorizationAdm,valid.validaNome,valid.validaSenha, async (req, res) => {
     //Fazer verificação se não é adm
     const {id, user, senha, adm} = req.body
 

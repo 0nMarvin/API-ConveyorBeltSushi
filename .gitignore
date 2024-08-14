@@ -7,7 +7,7 @@ package-lock.json
 # Ignorar modulos referência
 AuthorAPI.js
 BookAPI.js
-OldInstallAPI
+OldInstallAPI.js
 Author.js
 Book.js
 .env
