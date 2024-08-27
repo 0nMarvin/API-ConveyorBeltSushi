@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UserService = require('../services/userService')
+const FoodService = require("../services/foodService")
+const OrderModel = require('../model/Order')
 
 module.exports = {
     autorization: (req, res, next) => {
@@ -89,6 +91,57 @@ module.exports = {
         }
     
         next();
+    },
+
+    validaIdComida: async function (req, res, next) {
+        const { idComida } = req.body;
+    
+        try {
+            // Verifique a existência da comida no banco de dados
+            const comida = await FoodService.getById(idComida);
+            if (!comida) {
+                return res.status(404).json({ status: false, error: 'Comida não encontrada' });
+            }
+            next();
+        } catch (error) {
+            console.error('Erro ao validar ID da comida:', error);
+            return res.status(500).json({ status: false, error: 'Erro ao validar a comida' });
+        }
+    },
+
+    meuPedido: async function(req, res, next) {
+        const { id } = req.params;
+
+        try {
+            // Extrair o nome do usuário a partir do token
+            const username = module.exports.userName(req);
+            if (!username) {
+                return res.status(403).json({ status: false, error: 'Token inválido ou usuário não encontrado' });
+            }
+
+            // Buscar o usuário no banco de dados
+            const user = await UserService.getByName(username);
+            if (!user) {
+                return res.status(403).json({ status: false, error: 'Usuário não encontrado' });
+            }
+
+            // Buscar o pedido no banco de dados
+            const pedido = await OrderModel.findOne({
+                where: {
+                    orderCodigo: id, // Usando o nome correto da coluna
+                    userId: user.codigo, // Usando o ID do usuário encontrado
+                }
+            });
+
+            if (!pedido || pedido.isCook) {
+                return res.status(403).json({ status: false, error: 'Você não tem permissão para modificar este pedido' });
+            }
+
+            next();
+        } catch (error) {
+            console.error('Erro ao validar pedido:', error);
+            return res.status(500).json({ status: false, error: 'Erro ao validar o pedido' });
+        }
     },
     
 

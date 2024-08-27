@@ -12,6 +12,7 @@ app.use("/install", require('./control/InstallAPI'))
 app.use("/", require("./control/loginAPI"))
 app.use("/", require('./control/UserAPI'))
 app.use("/menu", require('./control/FoodApi'))
+app.use("/pedido", require('./control/OrderAPI'))
 
 app.listen(3000, () => {
     console.log("Listenning...")

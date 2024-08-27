@@ -5,7 +5,7 @@ const UserModel = require("./User.js");
 
 const OrderModel = sequelize.define('Order', 
     {
-        codigo: {
+        orderCodigo: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
@@ -29,11 +29,16 @@ const OrderModel = sequelize.define('Order',
             type: DataTypes.BOOLEAN,
             allowNull: true,
             defaultValue: false
-        }
+        },
+        // userId e foodId serão adicionados automaticamente como parte das associações
     }
 );
 
-UserModel.belongsToMany(FoodModel, { through: OrderModel, foreignKey: 'userId' });
-FoodModel.belongsToMany(UserModel, { through: OrderModel, foreignKey: 'foodId' });
+// Definição das associações sem restrição de unicidade
+UserModel.hasMany(OrderModel, { foreignKey: 'userId' });
+FoodModel.hasMany(OrderModel, { foreignKey: 'foodId' });
+
+OrderModel.belongsTo(UserModel, { foreignKey: 'userId' });
+OrderModel.belongsTo(FoodModel, { foreignKey: 'foodId' });
 
 module.exports = OrderModel;
