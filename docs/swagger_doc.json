@@ -54,7 +54,7 @@
         "tags": [
           "Login"
         ],
-        "description": "",
+        "description": "Rota responsável pelo Login.",
         "parameters": [
           {
             "name": "body",
@@ -90,7 +90,7 @@
         "tags": [
           "Login"
         ],
-        "description": "",
+        "description": "Rota aberta responsável pelo Cadastro de Usuário Não Administradores.",
         "parameters": [
           {
             "name": "body",
@@ -126,7 +126,7 @@
         "tags": [
           "Login"
         ],
-        "description": "",
+        "description": "Rota responsável pelo Cadastro de Usuários.",
         "parameters": [
           {
             "name": "length",
@@ -178,7 +178,7 @@
         "tags": [
           "User"
         ],
-        "description": "",
+        "description": "Rota que Altera os dados do Usuário Logado",
         "parameters": [
           {
             "name": "length",
@@ -230,7 +230,7 @@
         "tags": [
           "User"
         ],
-        "description": "",
+        "description": "Rota Responsável por Retornar Usuário procurado.",
         "parameters": [
           {
             "name": "id",
@@ -268,7 +268,7 @@
         "tags": [
           "User"
         ],
-        "description": "",
+        "description": "Rota responsável por excluir um usuário.",
         "parameters": [
           {
             "name": "id",
@@ -306,7 +306,7 @@
         "tags": [
           "User"
         ],
-        "description": "",
+        "description": "Rota responsável por alterar usuário específico.",
         "parameters": [
           {
             "name": "id",
@@ -364,7 +364,7 @@
         "tags": [
           "User"
         ],
-        "description": "",
+        "description": "Rota responsável por mostrar todos usuários.",
         "parameters": [
           {
             "name": "page?",
@@ -407,7 +407,7 @@
         "tags": [
           "Food"
         ],
-        "description": "",
+        "description": "Rota responsável por Mostrar todas as Comidas Cadastradas.",
         "parameters": [
           {
             "name": "limite",
@@ -438,7 +438,7 @@
         "tags": [
           "Food"
         ],
-        "description": "",
+        "description": "Rota responsável por Cadastrar Comida.",
         "parameters": [
           {
             "name": "length",
@@ -490,7 +490,7 @@
         "tags": [
           "Food"
         ],
-        "description": "",
+        "description": "Rota responsável por Alterar Comida.",
         "parameters": [
           {
             "name": "id",
@@ -549,7 +549,7 @@
         "tags": [
           "Food"
         ],
-        "description": "",
+        "description": "Rota responsável por deletar Comida Especificada.",
         "parameters": [
           {
             "name": "id",
@@ -589,7 +589,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por mostrar todos os Pedidos.",
         "parameters": [
           {
             "name": "limite",
@@ -631,7 +631,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por cadastrar pedido para Usuário.",
         "parameters": [
           {
             "name": "length",
@@ -677,7 +677,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por alterar Pedido do Usuário.",
         "parameters": [
           {
             "name": "id",
@@ -730,7 +730,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por Deletar Pedido do Usuário.",
         "parameters": [
           {
             "name": "id",
@@ -773,7 +773,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por Pagar a Conta dos Pedidos Entregues e Mostar o Total do Valor.",
         "parameters": [
           {
             "name": "length",
@@ -807,7 +807,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por colocar um pedido como Fazendo.",
         "parameters": [
           {
             "name": "limite",
@@ -851,7 +851,7 @@
         "tags": [
           "Order"
         ],
-        "description": "",
+        "description": "Rota responsável por colocar um pedido como feito.",
         "parameters": [
           {
             "name": "limite",
@@ -863,6 +863,40 @@
             "in": "query",
             "type": "string"
           },
+          {
+            "name": "length",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/pedido/myLanche": {
+      "get": {
+        "tags": [
+          "Order"
+        ],
+        "description": "Rota responsável por mostrar todos os Lanches que um usuário ja Pediu.",
+        "parameters": [
           {
             "name": "length",
             "in": "header",

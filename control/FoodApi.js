@@ -8,6 +8,7 @@ const valid = require("../midware/validate")
 
 router.get('/', async (req, res) => {
     // #swagger.tags = ['Food']
+    // #swagger.description = 'Rota responsável por Mostrar todas as Comidas Cadastradas.'
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
     const category = req.query.categoria || '';     // Categoria padrão vazia
@@ -25,6 +26,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', auth.autorizationAdm, valid.validaFood, valid.validaPrice, async (req, res) => {
     // #swagger.tags = ['Food']
+    // #swagger.description = 'Rota responsável por Cadastrar Comida.'
     const { name, type, price } = req.body;  // Inclua 'type' (categoria) no corpo da requisição
 
     let obj = await FoodService.save(name, type, price);  // Passe 'type' para o serviço
@@ -36,6 +38,7 @@ router.post('/', auth.autorizationAdm, valid.validaFood, valid.validaPrice, asyn
 
 router.put('/:id', auth.autorizationAdm, valid.validaFood, valid.validaPrice, async (req, res) => {
     // #swagger.tags = ['Food']
+    // #swagger.description = 'Rota responsável por Alterar Comida.'
     const { name, type, price } = req.body;
     const { id } = req.params;
 
@@ -54,6 +57,7 @@ router.put('/:id', auth.autorizationAdm, valid.validaFood, valid.validaPrice, as
 
 router.delete('/:id',auth.autorizationAdm, async (req, res) => {
     // #swagger.tags = ['Food']
+    // #swagger.description = 'Rota responsável por deletar Comida Especificada.'
     const {id} = req.params;
 
     let obj = await FoodService.getById(id)

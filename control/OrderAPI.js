@@ -7,6 +7,7 @@ const auth = require("../midware/auth")
 
 router.get('/', auth.autorizationAdm, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por mostrar todos os Pedidos.'
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -26,6 +27,7 @@ router.get('/', auth.autorizationAdm, async (req, res) => {
 
 router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por cadastrar pedido para Usuário.'
     const { idComida } = req.body;
     const username = auth.userName(req);
 
@@ -48,6 +50,7 @@ router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
 
 router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por alterar Pedido do Usuário.'
     const { idComida } = req.body;
     const orderCodigo = req.params.id;
 
@@ -70,6 +73,7 @@ router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async
 
 router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por Deletar Pedido do Usuário.'
     const orderCodigo = req.params.id;
 
     // Verifica se o pedido ainda está em preparo
@@ -91,6 +95,7 @@ router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
 
 router.put('/conta', auth.autorization, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por Pagar a Conta dos Pedidos Entregues e Mostar o Total do Valor.'
     const username = auth.userName(req);
 
     if (!username) {
@@ -113,6 +118,7 @@ router.put('/conta', auth.autorization, async (req, res) => {
 
 router.put('/cook', auth.autorizationAdm, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por colocar um pedido como Fazendo.'
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -133,6 +139,7 @@ router.put('/cook', auth.autorizationAdm, async (req, res) => {
 
 router.put('/done', auth.autorizationAdm, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por colocar um pedido como feito.'
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -153,6 +160,7 @@ router.put('/done', auth.autorizationAdm, async (req, res) => {
 
 router.get('/myLanche', auth.autorization, async (req, res) => {
     // #swagger.tags = ['Order']
+    // #swagger.description = 'Rota responsável por mostrar todos os Lanches que um usuário ja Pediu.'
     const username = auth.userName(req);
 
     if (!username) {
