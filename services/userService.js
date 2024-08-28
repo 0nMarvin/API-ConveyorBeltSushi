@@ -71,6 +71,20 @@ module.exports = {
         }
     },
 
+    listPaginated: async function(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const users = await UserModel.findAndCountAll({
+            limit: limit,
+            offset: offset
+        });
+        return {
+            users: users.rows,
+            totalItems: users.count,
+            totalPages: Math.ceil(users.count / limit),
+            currentPage: page
+        };
+    },
+
     validatePassword: async function(username, senha) {
         const user = await UserModel.findOne({ where: { user: username } });
         if (!user) {

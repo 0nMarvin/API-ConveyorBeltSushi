@@ -76,7 +76,7 @@ module.exports = {
         }
     
         // Verifica se o nome já existe
-        const existingUser = await FoodService.getByName(user);
+        const existingUser = await FoodService.getByName(name);
         if (existingUser) {
             return res.status(400).json({ status: false, error: "Comida já cadastrada" });
         }

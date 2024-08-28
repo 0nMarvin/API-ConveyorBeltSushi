@@ -5,9 +5,4 @@ node_modules/
 package-lock.json
 
 # Ignorar modulos referência
-AuthorAPI.js
-BookAPI.js
-OldInstallAPI.js
-Author.js
-Book.js
 .env

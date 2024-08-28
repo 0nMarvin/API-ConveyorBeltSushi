@@ -44,6 +44,47 @@ router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
         res.status(500).json(fail("Falha ao criar comida"));
 });
 
+router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async (req, res) => {
+    const { idComida } = req.body;
+    const orderCodigo = req.params.id;
+
+    // Verifica se o pedido ainda está em preparo
+    const verificaPedido = await OrderService.verificaPedido(orderCodigo);
+    if (verificaPedido.status && !verificaPedido.isOrder) {
+        return res.status(400).json(fail("Pedido não está mais em preparo, não há como modificá-lo"));
+    }
+
+    // Atualiza o pedido
+    let obj = await OrderService.update(orderCodigo, idComida);
+
+    if (obj) {
+        res.json(sucess(obj));
+    } else {
+        res.status(404).json(fail("Id da Comida não Encontrada ou falha ao alterar o pedido"));
+    }
+});
+
+
+router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
+    const orderCodigo = req.params.id;
+
+    // Verifica se o pedido ainda está em preparo
+    const verificaPedido = await OrderService.verificaPedido(orderCodigo);
+    if (verificaPedido.status && !verificaPedido.isOrder) {
+        return res.status(400).json(fail("Pedido não está mais em preparo, não há como deletá-lo"));
+    }
+
+    // Exclui o pedido
+    let result = await OrderService.delete(orderCodigo);
+
+    if (result) {
+        res.json(sucess({message: "Pedido deletado com sucesso"}));
+    } else {
+        res.status(404).json(fail("Pedido não encontrado ou falha ao excluir o pedido"));
+    }
+});
+
+
 router.put('/conta', auth.autorization, async (req, res) => {
     const username = auth.userName(req);
 
@@ -103,45 +144,6 @@ router.put('/done', auth.autorizationAdm, async (req, res) => {
     }  
 });
 
-router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async (req, res) => {
-    const { idComida } = req.body;
-    const orderCodigo = req.params.id;
-
-    // Verifica se o pedido ainda está em preparo
-    const verificaPedido = await OrderService.verificaPedido(orderCodigo);
-    if (verificaPedido.status && !verificaPedido.isOrder) {
-        return res.status(400).json(fail("Pedido não está mais em preparo, não há como modificá-lo"));
-    }
-
-    // Atualiza o pedido
-    let obj = await OrderService.update(orderCodigo, idComida);
-
-    if (obj) {
-        res.json(sucess(obj));
-    } else {
-        res.status(404).json(fail("Id da Comida não Encontrada ou falha ao alterar o pedido"));
-    }
-});
-
-
-router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
-    const orderCodigo = req.params.id;
-
-    // Verifica se o pedido ainda está em preparo
-    const verificaPedido = await OrderService.verificaPedido(orderCodigo);
-    if (verificaPedido.status && !verificaPedido.isOrder) {
-        return res.status(400).json(fail("Pedido não está mais em preparo, não há como deletá-lo"));
-    }
-
-    // Exclui o pedido
-    let result = await OrderService.delete(orderCodigo);
-
-    if (result) {
-        res.json(sucess({message: "Pedido deletado com sucesso"}));
-    } else {
-        res.status(404).json(fail("Pedido não encontrado ou falha ao excluir o pedido"));
-    }
-});
 
 
 module.exports = router;

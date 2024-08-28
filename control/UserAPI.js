@@ -6,7 +6,7 @@ const UserService = require('../services/userService')
 const auth = require("../midware/auth")
 const valid = require("../midware/validate")
 
-router.put('/alterar', auth.autorization, valid.validaNome,valid.validaSenha, async (req, res) => {
+router.put('/', auth.autorization, valid.validaNome,valid.validaSenha, async (req, res) => {
     const {user, senha} = req.body;
 
     const username = auth.userName(req);
@@ -28,11 +28,32 @@ router.put('/alterar', auth.autorization, valid.validaNome,valid.validaSenha, as
         res.status(500).json(fail("Usuário não encontrado ou nenhuma alteração feita"));
 });
 
-router.get('/adm/:id', auth.autorizationAdm,async(req,res) =>{
-    let obj = await UserService.getByName(req.params.id)
-})
+router.get('/adm/:id', auth.autorizationAdm, async (req, res) => {
+    try {
+        let obj = await UserService.getById(req.params.id);
+        if (obj) {
+            res.status(200).json(obj);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
-router.delete('/adm/excluir/:id', auth.autorizationAdm, async (req, res) => {
+router.get('/adm/:page?/:limit?', auth.autorizationAdm, async (req, res) => {
+    const page = parseInt(req.params.page) || 1; // Página padrão é 1
+    const limit = parseInt(req.params.limit) || 10; // Limite padrão é 10
+
+    try {
+        const result = await UserService.listPaginated(page, limit);
+        res.status(200).json(sucess(result));
+    } catch (error) {
+        res.status(500).json(fail('Internal server error'));
+    }
+});
+
+router.delete('/adm/:id', auth.autorizationAdm, async (req, res) => {
     // Obtém o ID do usuário a ser excluído
     const userId = req.params.id;
 
@@ -57,14 +78,16 @@ router.delete('/adm/excluir/:id', auth.autorizationAdm, async (req, res) => {
     }
 })
 
-router.put('/adm/alterar',auth.autorizationAdm,valid.validaNome,valid.validaSenha, async (req, res) => {
+router.put('/adm/:id',auth.autorizationAdm,valid.validaNome,valid.validaSenha, async (req, res) => {
     //Fazer verificação se não é adm
-    const {id, user, senha, adm} = req.body
-
-    if(adm == 1){
-        let resultado = await UserService.update(id, user, senha, true)
+    const id = req.params.id;
+    const {user, senha, adm} = req.body
+    
+    let resultado;
+    if(adm == "true"){
+        resultado = await UserService.update(id, user, senha, true)
     }else{
-        let resultado = await UserService.update(id, user, senha)
+        resultado = await UserService.update(id, user, senha)
     }
 
     if (resultado[0] > 0) // Verifica se alguma linha foi atualizada

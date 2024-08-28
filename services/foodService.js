@@ -2,15 +2,6 @@ const {Op} = require("sequelize")
 const FoodModel = require("../model/Food.js")
 
 module.exports = {
-    list: async function(limit, page) {
-        const offset = (page - 1) * limit;
-        const foods = await FoodModel.findAll({
-            limit: limit,
-            offset: offset
-        });
-        return foods;
-    },
-
     search: async function(limit, page, category) {
         const offset = (page - 1) * limit;
         
@@ -35,15 +26,23 @@ module.exports = {
     },
 
     update: async function(id, name, type, price) {
-        return await FoodModel.update({nameFood: name, typeFood: type, priceFood: price}, {
-            where: { codigo: id }
-        })
-    },
-
-    update: async function(id, name) {
-        return await FoodModel.update({nameFood: name}, {
-            where: { codigo: id }
-        })
+        const result = await FoodModel.update(
+            {
+                nameFood: name,
+                typeFood: type,
+                priceFood: price
+            },
+            {
+                where: { codigoFood: id }  
+            }
+        );
+        
+        // Retorna o objeto atualizado, se a operação foi bem-sucedida
+        if (result[0] > 0) {
+            return await FoodModel.findByPk(id);
+        } else {
+            return null; // Caso nenhuma linha tenha sido atualizada
+        }
     },
 
     delete: async function(id) {

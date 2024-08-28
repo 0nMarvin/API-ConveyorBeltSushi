@@ -47,11 +47,11 @@ router.post('/cadastro', auth.validaNome,auth.validaSenha, async (req, res) => {
         res.status(500).json(fail("Falha ao salvar o novo usuário"))
 })
 
-router.post('/adm/cadastro',auth.autorizationAdm, auth.validaNome,auth.validaSenha, async (req, res) => {
+router.post('/cadastro/adm',auth.autorizationAdm, auth.validaNome,auth.validaSenha, async (req, res) => {
     const {user, senha, adm} = req.body
 
     let obj
-    if(adm == 1){
+    if(adm == "true"){
          obj = await UserService.saveAdm(user, senha)
     }else{
          obj = await UserService.save(user, senha)
