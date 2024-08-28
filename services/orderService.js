@@ -1,30 +1,34 @@
-const OrderModel = require("../model/Order")
-const UserModel = require("../model/User")
-const FoodModel = require("../model/Food")
-const RespostaHelper = require("../helpers/resposta")
+const OrderModel = require("../model/Order");
+const UserModel = require("../model/User");
+const FoodModel = require("../model/Food");
+const RespostaHelper = require("../helpers/resposta");
+const { Op } = require('sequelize');
 
 module.exports = {
     list: async function(limit, page) {
         const offset = (page - 1) * limit;
-        
-        const orders = await OrderModel.findAll({
-            limit: limit,
-            offset: offset,
-            include: [
-                {
-                    model: UserModel,
-                    attributes: ['user'], 
-                    through: { attributes: [] } // Exclui a tabela de junção da resposta
-                },
-                {
-                    model: FoodModel,
-                    attributes: ['nameFood'], 
-                    through: { attributes: [] } // Exclui a tabela de junção da resposta
-                }
-            ]
-        });
 
-        return orders;
+        try {
+            const orders = await OrderModel.findAll({
+                limit: limit,
+                offset: offset,
+                include: [
+                    {
+                        model: UserModel,
+                        attributes: ['user']  // Inclui apenas o atributo 'user'
+                    },
+                    {
+                        model: FoodModel,
+                        attributes: ['nameFood']  // Inclui apenas o atributo 'nameFood'
+                    }
+                ]
+            });
+
+            return orders;
+        } catch (error) {
+            console.error("Erro ao listar pedidos:", error);
+            throw new Error("Erro ao listar pedidos.");
+        }
     },
 
     makeCook: async function(limit, page) {
@@ -83,20 +87,28 @@ module.exports = {
         return pedidos;
     },
 
-    conta: async function(userId) {
+    conta: async function(user) {
+        const userId = user.codigo;
+
         try {
-            // 1. Buscar todos os pedidos do usuário que estão concluídos (isDone: true)
+            // Buscar todos os pedidos do usuário que estão concluídos (isDone: true)
             const completedOrders = await OrderModel.findAll({
                 where: {
                     userId: userId,
                     isDone: true
-                }
+                },
+                include: [
+                    {
+                        model: FoodModel,
+                        attributes: ['priceFood'] // Inclui o preço dos alimentos
+                    }
+                ]
             });
-    
-            // 1.1 Somar os preços dos pedidos concluídos
-            const totalPrice = completedOrders.reduce((sum, order) => sum + order.price, 0);
-    
-            // 2. Buscar todos os pedidos em preparo (isCook: true OU isOrder: true)
+
+            // Somar os preços dos pedidos concluídos
+            const totalPrice = completedOrders.reduce((sum, order) => sum + parseFloat(order.Food.priceFood), 0);
+
+            // Buscar todos os pedidos em preparo
             const preparingOrders = await OrderModel.findAll({
                 where: {
                     userId: userId,
@@ -106,13 +118,13 @@ module.exports = {
                     ]
                 }
             });
-    
-            // 3. Atualizar pedidos concluídos (isDone: true) para isDone, isCook, e isOrder como false
+
+            // Atualizar pedidos concluídos
             await OrderModel.update(
                 { isDone: false, isCook: false, isOrder: false },
                 { where: { userId: userId, isDone: true } }
             );
-    
+
             // Retornar os resultados
             return {
                 completedOrders: {
@@ -121,7 +133,7 @@ module.exports = {
                 },
                 preparingOrders: preparingOrders
             };
-            
+
         } catch (error) {
             console.error("Erro ao processar a conta do usuário:", error);
             throw new Error("Erro ao processar a conta do usuário.");
@@ -145,19 +157,19 @@ module.exports = {
     },  
     
     preparando: async function(codigo) {
-        return await OrderModel.update({isRoder: false, isCook: true, isDone: false}, {
+        return await OrderModel.update({isOrder: false, isCook: true, isDone: false}, {
             where: { orderCodigo: codigo }
         });
     }, 
 
     entregue: async function(codigo) {
-        return await OrderModel.update({isRoder: false, isCook: false, isDone: true}, {
+        return await OrderModel.update({isOrder: false, isCook: false, isDone: true}, {
             where: { orderCodigo: codigo }
         });
     }, 
 
     fechar: async function(codigo) {
-        return await OrderModel.update({isRoder: false, isCook: false, isDone: false}, {
+        return await OrderModel.update({isOrder: false, isCook: false, isDone: false}, {
             where: { orderCodigo: codigo }
         });
     }, 
@@ -197,4 +209,4 @@ module.exports = {
             return RespostaHelper.fail("Erro ao verificar o pedido");
         }
     },
-}
+};

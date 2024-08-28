@@ -1,7 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../helpers/bd.js");
-const FoodModel = require("./Food.js");
-const UserModel = require("./User.js");
 
 const OrderModel = sequelize.define('Order', 
     {
@@ -34,7 +32,9 @@ const OrderModel = sequelize.define('Order',
     }
 );
 
-// Definição das associações sem restrição de unicidade
+const UserModel = require("./User");
+const FoodModel = require("./Food");
+
 UserModel.hasMany(OrderModel, { foreignKey: 'userId' });
 FoodModel.hasMany(OrderModel, { foreignKey: 'foodId' });
 

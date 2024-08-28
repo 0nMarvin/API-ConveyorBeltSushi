@@ -44,7 +44,7 @@ router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
         res.status(500).json(fail("Falha ao criar comida"));
 });
 
-router.get('/conta', auth.autorization, async (req, res) => {
+router.put('/conta', auth.autorization, async (req, res) => {
     const username = auth.userName(req);
 
     if (!username) {
@@ -57,7 +57,7 @@ router.get('/conta', auth.autorization, async (req, res) => {
     }
 
     try {
-        const result = await UserService.conta(userRecord);
+        const result = await OrderService.conta(userRecord);
         res.json(sucess(result));
     } catch (err) {
         console.log(err);
@@ -70,6 +70,7 @@ router.put('/cook', auth.autorizationAdm, async (req, res) => {
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
     try {
+        // Chama o método makeCook para atualizar os pedidos
         const orders = await OrderService.makeCook(limit, page);
         
         if (orders && orders.length > 0) {
@@ -88,6 +89,7 @@ router.put('/done', auth.autorizationAdm, async (req, res) => {
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
     try {
+        // Chama o método makeDone para atualizar os pedidos
         const orders = await OrderService.makeDone(limit, page);
         
         if (orders && orders.length > 0) {
