@@ -7,6 +7,7 @@ const auth = require("../midware/auth")
 const valid = require("../midware/validate")
 
 router.put('/', auth.autorization, valid.validaNome,valid.validaSenha, async (req, res) => {
+    // #swagger.tags = ['User']
     const {user, senha} = req.body;
 
     const username = auth.userName(req);
@@ -29,6 +30,7 @@ router.put('/', auth.autorization, valid.validaNome,valid.validaSenha, async (re
 });
 
 router.get('/adm/:id', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['User']
     try {
         let obj = await UserService.getById(req.params.id);
         if (obj) {
@@ -42,6 +44,7 @@ router.get('/adm/:id', auth.autorizationAdm, async (req, res) => {
 });
 
 router.get('/adm/:page?/:limit?', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['User']
     const page = parseInt(req.params.page) || 1; // Página padrão é 1
     const limit = parseInt(req.params.limit) || 10; // Limite padrão é 10
 
@@ -54,6 +57,7 @@ router.get('/adm/:page?/:limit?', auth.autorizationAdm, async (req, res) => {
 });
 
 router.delete('/adm/:id', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['User']
     // Obtém o ID do usuário a ser excluído
     const userId = req.params.id;
 
@@ -79,6 +83,7 @@ router.delete('/adm/:id', auth.autorizationAdm, async (req, res) => {
 })
 
 router.put('/adm/:id',auth.autorizationAdm,valid.validaNome,valid.validaSenha, async (req, res) => {
+    // #swagger.tags = ['User']
     //Fazer verificação se não é adm
     const id = req.params.id;
     const {user, senha, adm} = req.body

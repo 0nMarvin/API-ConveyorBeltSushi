@@ -6,8 +6,10 @@ const app = express()
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
-/*app.use("/books", require("./control/BookAPI"))
-app.use("/authors", require("./control/AuthorAPI"))*/
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./docs/swagger_doc.json')
+
+app.use("/docs",swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use("/install", require('./control/InstallAPI'))
 app.use("/", require("./control/loginAPI"))
 app.use("/", require('./control/UserAPI'))

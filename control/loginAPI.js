@@ -20,6 +20,7 @@ function generateToken(isAdmin, username) {
 }
 
 router.post('/login', async (req, res) => {
+    // #swagger.tags = ['Login']
     const { user, senha } = req.body;
 
     if (!user || !senha) {
@@ -38,6 +39,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/cadastro', auth.validaNome,auth.validaSenha, async (req, res) => {
+    // #swagger.tags = ['Login']
     const {user, senha} = req.body
 
     let obj = await UserService.save(user, senha)
@@ -48,6 +50,7 @@ router.post('/cadastro', auth.validaNome,auth.validaSenha, async (req, res) => {
 })
 
 router.post('/cadastro/adm',auth.autorizationAdm, auth.validaNome,auth.validaSenha, async (req, res) => {
+    // #swagger.tags = ['Login']
     const {user, senha, adm} = req.body
 
     let obj

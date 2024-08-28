@@ -6,6 +6,7 @@ const OrderService = require("../services/orderService")
 const auth = require("../midware/auth")
 
 router.get('/', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['Order']
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -24,6 +25,7 @@ router.get('/', auth.autorizationAdm, async (req, res) => {
 });
 
 router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
+    // #swagger.tags = ['Order']
     const { idComida } = req.body;
     const username = auth.userName(req);
 
@@ -45,6 +47,7 @@ router.post('/', auth.autorization, auth.validaIdComida, async (req, res) => {
 });
 
 router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async (req, res) => {
+    // #swagger.tags = ['Order']
     const { idComida } = req.body;
     const orderCodigo = req.params.id;
 
@@ -66,6 +69,7 @@ router.put('/:id', auth.autorization, auth.validaIdComida, auth.meuPedido, async
 
 
 router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
+    // #swagger.tags = ['Order']
     const orderCodigo = req.params.id;
 
     // Verifica se o pedido ainda está em preparo
@@ -86,6 +90,7 @@ router.delete('/:id', auth.autorization, auth.meuPedido, async (req, res) => {
 
 
 router.put('/conta', auth.autorization, async (req, res) => {
+    // #swagger.tags = ['Order']
     const username = auth.userName(req);
 
     if (!username) {
@@ -98,7 +103,7 @@ router.put('/conta', auth.autorization, async (req, res) => {
     }
 
     try {
-        const result = await OrderService.conta(userRecord);
+        const result = await OrderService.conta(userRecord.codigo);
         res.json(sucess(result));
     } catch (err) {
         console.log(err);
@@ -107,6 +112,7 @@ router.put('/conta', auth.autorization, async (req, res) => {
 });
 
 router.put('/cook', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['Order']
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -126,6 +132,7 @@ router.put('/cook', auth.autorizationAdm, async (req, res) => {
 });
 
 router.put('/done', auth.autorizationAdm, async (req, res) => {
+    // #swagger.tags = ['Order']
     const limit = parseInt(req.query.limite) || 10; // Limite padrão de 10
     const page = parseInt(req.query.pagina) || 1;   // Página padrão de 1
 
@@ -144,6 +151,27 @@ router.put('/done', auth.autorizationAdm, async (req, res) => {
     }  
 });
 
+router.get('/myLanche', auth.autorization, async (req, res) => {
+    // #swagger.tags = ['Order']
+    const username = auth.userName(req);
+
+    if (!username) {
+        return res.status(403).json(fail("Token inválido ou não autorizado"));
+    }
+
+    let userRecord = await OrderService.getByUserName(username);
+    if (!userRecord) {
+        return res.status(404).json(fail("Usuário não encontrado"));
+    }
+
+    try {
+        const result = await OrderService.verificaLanches(userRecord);
+        res.json(sucess(result));
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(fail("Falha ao processar a conta do usuário."));
+    }
+});
 
 
 module.exports = router;

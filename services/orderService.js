@@ -209,4 +209,62 @@ module.exports = {
             return RespostaHelper.fail("Erro ao verificar o pedido");
         }
     },
-};
+
+    /*
+    verificaLanches: async function(id, res) {
+        try {
+    
+            if (!id) {
+                return res.status(400).json({ error: "ID de usuário inválido." });
+            }
+    
+            const orders = await OrderModel.findAll({
+                where: { userId: id },
+                include: [
+                    {
+                        model: FoodModel,
+                        attributes: ['nameFood']  // Inclui apenas o atributo 'nameFood'
+                    }
+                ]
+            });
+    
+            if (orders.length === 0) {
+                return res.status(404).json({ error: "Nenhum pedido encontrado para este usuário." });
+            }
+    
+            res.status(200).json(orders);
+        } catch (error) {
+            console.error("Erro ao listar pedidos:", error);
+            res.status(500).json({ error: "Erro ao listar pedidos." });
+        }
+    },*/
+
+    verificaLanches: async function(user) {
+        const userId = user.codigo;
+        try {
+            const completedOrders = await OrderModel.findAll({
+                attributes: ['dataHora'],
+                where: {
+                    userId: userId
+                },
+                include: [
+                    {
+                        model: FoodModel,
+                        attributes: ['nameFood'] // Inclui o preço dos alimentos
+                    }
+                ]
+            });
+
+            return {
+                completedOrders: {
+                    orders: completedOrders
+                },
+            };
+
+        } catch (error) {
+            console.error("Erro ao processar a conta do usuário:", error);
+            throw new Error("Erro ao processar a conta do usuário.");
+        }
+    },
+    
+}

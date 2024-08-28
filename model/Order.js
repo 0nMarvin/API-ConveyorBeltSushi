@@ -28,7 +28,6 @@ const OrderModel = sequelize.define('Order',
             allowNull: true,
             defaultValue: false
         },
-        // userId e foodId serão adicionados automaticamente como parte das associações
     }
 );
 

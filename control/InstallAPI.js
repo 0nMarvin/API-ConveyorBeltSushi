@@ -6,6 +6,8 @@ const FoodModel = require('../model/Food');
 const OrderModel = require('../model/Order');
 
 router.get('/', async (req, res) => {
+    // #swagger.tags = ['BD']
+
     try {
         await sequelize.sync({ force: true });
 
